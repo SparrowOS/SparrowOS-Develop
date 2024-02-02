@@ -1,0 +1,3 @@
+#-BuildVersion：学习、操作系统雏形
+#-Beta：完善系统功能
+#-Rehearsal：修复漏洞的预发行版本
