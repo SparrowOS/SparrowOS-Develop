@@ -106,6 +106,7 @@ void sheet_down(struct SHTCTL *ctl, struct SHEET *sht, int height)
             ctl->sheets[height] = sht;
             ctl->top++;
         }
+        sheet_refresh(ctl);
     }
-    sheet_refresh(ctl);
+    return;
 }
