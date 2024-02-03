@@ -49,7 +49,7 @@ void HariMain(void)
 	//水印
 		putfonts8(binfo->vram, binfo->scrnx, 239, 155, COL8_000000, "SparrowOS.");
 		putfonts8(binfo->vram, binfo->scrnx, 240, 155, COL8_FFFFFF, "SparrowOS.");
-	
+
 	putfonts8(binfo->vram, binfo->scrnx, 210, 73, COL8_000000, "Powered by:");
 	putfonts8(binfo->vram, binfo->scrnx, 211, 73, COL8_FFFFFF, "Powered by:");
 	puttext(binfo->vram, binfo->scrnx, 225, 90, COL8_0000FF, 6);
