@@ -72,7 +72,19 @@ void init_screen8(char *vram, int x, int y)
 	boxfill8(vram, x, COL8_848484, x - 47, y - 23, x - 47, y -  4);
 	boxfill8(vram, x, COL8_FFFFFF, x - 47, y -  3, x -  4, y -  3);
 	boxfill8(vram, x, COL8_FFFFFF, x -  3, y - 24, x -  3, y -  3);
-	return;
+    //水印
+        putfonts8_asc(vram, x, 239, 155, COL8_000000, "SparrowOS.");
+        putfonts8_asc(vram, x, 240, 155, COL8_FFFFFF, "SparrowOS.");
+
+    // putfonts8_asc(vram, x, 210, 73, COL8_000000, "Powered by:");
+    // putfonts8_asc(vram, x, 211, 73, COL8_FFFFFF, "Powered by:");
+    // puttext(vram, x, 225, 90, COL8_0000FF, 6);
+    // puttext(vram, x, 242, 90, COL8_0000FF, 7);
+    // puttext(vram, x, 259, 90, COL8_0000FF, 8);
+    // puttext(vram, x, 276, 90, COL8_0000FF, 9);
+    // putfonts8_asc(vram, x, 225, 107, COL8_0000FF, "Kdq_kongdeqi");
+    // putfonts8_asc(vram, x, 225, 124, COL8_0000FF, "buyio");
+	// return;
 }
 
 void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
@@ -94,7 +106,7 @@ void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
 	return;
 }
 
-void putfonts8(char *vram, int xsize, int x, int y, char c, unsigned char *s)
+void putfonts8_asc(char *vram, int xsize, int x, int y, char c, unsigned char *s)
 {
 	extern char font[4096];
 	for (; *s != 0x00; s++) {
