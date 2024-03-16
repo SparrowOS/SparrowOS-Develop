@@ -17,7 +17,6 @@ EDIMG    = $(TOOLPATH)edimg.exe
 IMGTOL   = $(TOOLPATH)imgtol.com
 COPY     = copy
 DEL      = del
-RN		 = rn
 
 # デフォルト動作
 
@@ -75,7 +74,6 @@ run :
 	$(MAKE) img
 	$(COPY) SparrowOS.img ..\z_tools\qemu\fdimage0.bin
 	$(MAKE) -C ../z_tools/qemu
-	$(MAKE) clean
 
 install :
 	$(MAKE) img

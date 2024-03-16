@@ -1,10 +1,10 @@
 ; naskfunc
 ; TAB=4
 
-[FORMAT "WCOFF"]				; „Ç™„Éñ„Ç∏„Çß„ÇØ„Éà„Éï„Ç°„Ç§„É´„Çí‰Ωú„Çã„É¢„Éº„Éâ	
-[INSTRSET "i486p"]				; 486„ÅÆÂëΩ‰ª§„Åæ„Åß‰Ωø„ÅÑ„Åü„ÅÑ„Å®„ÅÑ„ÅÜË®òËø∞
-[BITS 32]						; 32„Éì„ÉÉ„Éà„É¢„Éº„ÉâÁî®„ÅÆÊ©üÊ¢∞Ë™û„Çí‰Ωú„Çâ„Åõ„Çã
-[FILE "naskfunc.nas"]			; „ÇΩ„Éº„Çπ„Éï„Ç°„Ç§„É´ÂêçÊÉÖÂ†±
+[FORMAT "WCOFF"]				; ÉIÉuÉWÉFÉNÉgÉtÉ@ÉCÉãÇçÏÇÈÉÇÅ[Éh	
+[INSTRSET "i486p"]				; 486ÇÃñΩóﬂÇ‹Ç≈égÇ¢ÇΩÇ¢Ç∆Ç¢Ç§ãLèq
+[BITS 32]						; 32ÉrÉbÉgÉÇÅ[ÉhópÇÃã@äBåÍÇçÏÇÁÇπÇÈ
+[FILE "naskfunc.nas"]			; É\Å[ÉXÉtÉ@ÉCÉãñºèÓïÒ
 
 		GLOBAL	_io_hlt, _io_cli, _io_sti, _io_stihlt
 		GLOBAL	_io_in8,  _io_in16,  _io_in32
@@ -71,14 +71,14 @@ _io_out32:	; void io_out32(int port, int data);
 		RET
 
 _io_load_eflags:	; int io_load_eflags(void);
-		PUSHFD		; PUSH EFLAGS „Å®„ÅÑ„ÅÜÊÑèÂë≥
+		PUSHFD		; PUSH EFLAGS Ç∆Ç¢Ç§à”ñ°
 		POP		EAX
 		RET
 
 _io_store_eflags:	; void io_store_eflags(int eflags);
 		MOV		EAX,[ESP+4]
 		PUSH	EAX
-		POPFD		; POP EFLAGS „Å®„ÅÑ„ÅÜÊÑèÂë≥
+		POPFD		; POP EFLAGS Ç∆Ç¢Ç§à”ñ°
 		RET
 
 _load_gdtr:		; void load_gdtr(int limit, int addr);
@@ -93,13 +93,13 @@ _load_idtr:		; void load_idtr(int limit, int addr);
 		LIDT	[ESP+6]
 		RET
 
-_load_cr0:
+_load_cr0:		; int load_cr0(void);
 		MOV		EAX,CR0
 		RET
 
-_store_cr0:
+_store_cr0:		; void store_cr0(int cr0);
 		MOV		EAX,[ESP+4]
-		MOV		CR0,EXA
+		MOV		CR0,EAX
 		RET
 
 _asm_inthandler21:
@@ -150,34 +150,34 @@ _asm_inthandler2c:
 		POP		ES
 		IRETD
 
-_memtest_sub:
-		PUSH	EDI
+_memtest_sub:	; unsigned int memtest_sub(unsigned int start, unsigned int end)
+		PUSH	EDI						; ÅiEBX, ESI, EDI Ç‡égÇ¢ÇΩÇ¢ÇÃÇ≈Åj
 		PUSH	ESI
 		PUSH	EBX
-		MOV		ESI,0xaa55aa55
-		MOV		EDI,0x55aa55aa
-		MOV		EAX,[ESP+12+4]
+		MOV		ESI,0xaa55aa55			; pat0 = 0xaa55aa55;
+		MOV		EDI,0x55aa55aa			; pat1 = 0x55aa55aa;
+		MOV		EAX,[ESP+12+4]			; i = start;
 mts_loop:
 		MOV		EBX,EAX
-		ADD		EBX,0xffc
-		MOV		EDX,[EBX]
-		MOV		[EBX],ESI
-		XOR		DWORD [EBX],0xffffffff
-		CMP		EDI,[EBX]
+		ADD		EBX,0xffc				; p = i + 0xffc;
+		MOV		EDX,[EBX]				; old = *p;
+		MOV		[EBX],ESI				; *p = pat0;
+		XOR		DWORD [EBX],0xffffffff	; *p ^= 0xffffffff;
+		CMP		EDI,[EBX]				; if (*p != pat1) goto fin;
 		JNE		mts_fin
-		XOR		DWORD [EBX],0xffffffff
-		CMP		ESI,[EBX]
+		XOR		DWORD [EBX],0xffffffff	; *p ^= 0xffffffff;
+		CMP		ESI,[EBX]				; if (*p != pat0) goto fin;
 		JNE		mts_fin
-		MOV		[EBX],EDX
-		ADD		EAX,0x1000
-		CMP		EAX,[ESP+12+8]
+		MOV		[EBX],EDX				; *p = old;
+		ADD		EAX,0x1000				; i += 0x1000;
+		CMP		EAX,[ESP+12+8]			; if (i <= end) goto mts_loop;
 		JBE		mts_loop
-		POP 	EBX
+		POP		EBX
 		POP		ESI
 		POP		EDI
 		RET
 mts_fin:
-		MOV		[EBX],EDX
+		MOV		[EBX],EDX				; *p = old;
 		POP		EBX
 		POP		ESI
 		POP		EDI
