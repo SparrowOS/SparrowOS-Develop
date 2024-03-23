@@ -10,7 +10,7 @@ void HariMain(void)
     struct BOOTINFO *binfo = (struct BOOTINFO *) ADR_BOOTINFO;
     char s[40], keybuf[32], mousebuf[128];
     int mx, my, i;
-    unsigned int memtotal;
+    unsigned int memtotal, count = 0;
     struct MOUSE_DEC mdec;
     struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
     struct SHTCTL *shtctl;
@@ -38,15 +38,13 @@ void HariMain(void)
     sht_mouse = sheet_alloc(shtctl);
     sht_win   = sheet_alloc(shtctl);
     buf_back  = (unsigned char *) memman_alloc_4k(memman, binfo->scrnx * binfo->scrny);
-    buf_win   = (unsigned char *) memman_alloc_4k(memman, 160 * 68);
+    buf_win   = (unsigned char *) memman_alloc_4k(memman, 160 * 52);
     sheet_setbuf(sht_back, buf_back, binfo->scrnx, binfo->scrny, -1);
     sheet_setbuf(sht_mouse, buf_mouse, 16, 16, 99);
     sheet_setbuf(sht_win, buf_win, 160, 68, -1);
     init_screen8(buf_back, binfo->scrnx, binfo->scrny);
     init_mouse_cursor8(buf_mouse, 99);
-    make_window8(buf_win, 160, 68, "Window");
-    putfonts8_asc(buf_win, 160, 24, 28, COL8_000000, "Welcome to");
-    putfonts8_asc(buf_win, 160, 24, 44, COL8_000000, "  SparrowOS!");
+    make_window8(buf_win, 160, 68, "Counter");
     sheet_slide(sht_back, 0, 0);
     mx = (binfo->scrnx - 16) / 2;
     my = (binfo->scrny - 28 - 16) / 2;
@@ -63,9 +61,15 @@ void HariMain(void)
     sheet_refresh(sht_back, 0, 0, binfo->scrnx, 48);
     
     for (;;) {
+        count++;
+        sprintf(s, "%010d", count);
+        boxfill8(buf_win, 160, COL8_C6C6C6, 40, 28, 119, 43);
+        putfonts8_asc(buf_win, 160, 40, 28, COL8_000000, s);
+        sheet_refresh(sht_win, 0, 0, binfo->scrnx, 48);
+
         io_cli();
         if (fifo8_status(&keyfifo) + fifo8_status(&mousefifo) == 0) {
-            io_stihlt();
+            io_sti();
         } else {
             if (fifo8_status(&keyfifo) != 0) {
                 i = fifo8_get(&keyfifo);
@@ -147,7 +151,7 @@ void make_window8(unsigned char *buf, int xsize, int ysize, char *title)
 	boxfill8(buf, xsize, COL8_848484, xsize - 2, 1,         xsize - 2, ysize - 2);
 	boxfill8(buf, xsize, COL8_000000, xsize - 1, 0,         xsize - 1, ysize - 1);
 	boxfill8(buf, xsize, COL8_C6C6C6, 2,         2,         xsize - 3, ysize - 3);
-	boxfill8(buf, xsize, COL8_000084, 3,         3,         xsize - 4, 20       );
+	boxfill8(buf, xsize, COL8_000084, 3,         3,         xsize - 4, 21       );
 	boxfill8(buf, xsize, COL8_848484, 1,         ysize - 2, xsize - 2, ysize - 2);
 	boxfill8(buf, xsize, COL8_000000, 0,         ysize - 1, xsize - 1, ysize - 1);
 	putfonts8_asc(buf, xsize, 24, 4, COL8_FFFFFF, title);
